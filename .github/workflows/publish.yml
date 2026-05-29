@@ -26,12 +26,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      # One-time BOOTSTRAP step: publishes via NPM_TOKEN because npm won't let
-      # us configure Trusted Publishing until the package already exists. After
-      # the first publish lands, configure the Trusted Publisher on npmjs.com,
-      # revoke the token, and delete the `env:` block below — leaving tokenless
-      # OIDC (the steady-state every other package uses).
       - name: Publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx -y npm@latest publish --provenance --access public
