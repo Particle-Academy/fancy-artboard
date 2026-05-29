@@ -1,0 +1,367 @@
+/* fancy-artboard — canvas grid + zoom-invariant chrome.
+   Import via `@particle-academy/fancy-artboard/styles.css`.
+   All classes are `fa-`prefixed so they never collide with hosted content. */
+
+.fa-viewport {
+  --fa-bg: #f0eee9;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  box-sizing: border-box;
+  background: var(--fa-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  color: rgba(60, 50, 40, 0.7);
+}
+
+.fa-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  width: max-content;
+  min-width: 100%;
+  min-height: 100%;
+  padding: 60px 0 80px;
+}
+
+/* Tiled grid behind the world; large negative inset so it covers panning. */
+.fa-grid {
+  position: absolute;
+  inset: -6000px;
+  background-size: 120px 120px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ── Section ───────────────────────────────────────────────────────────── */
+/* marginBottom counter-scales so the on-screen gap between sections stays
+   constant; otherwise at low zoom the world-space gap collapses under the
+   screen-constant section head. */
+.fa-section {
+  position: relative;
+  margin-bottom: calc(80px * var(--fa-inv-zoom, 1));
+}
+
+.fa-sectionhead-wrap {
+  padding: 0 60px;
+}
+
+/* CSS `zoom` (not transform) so the head's layout box grows with the counter-
+   scale, pushing the piece row down — keeping the title clear of the row at
+   low zoom. */
+.fa-sectionhead {
+  zoom: var(--fa-inv-zoom, 1);
+  padding-bottom: 36px;
+}
+
+.fa-sectiontitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: rgba(40, 30, 20, 0.85);
+  letter-spacing: -0.4px;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+
+.fa-sectionsub {
+  font-size: 16px;
+  color: rgba(60, 50, 40, 0.6);
+}
+
+.fa-row {
+  display: flex;
+  gap: 48px;
+  padding: 0 60px;
+  align-items: flex-start;
+  width: max-content;
+}
+
+/* ── Piece slot + card ─────────────────────────────────────────────────── */
+[data-fa-piece] {
+  position: relative;
+  flex-shrink: 0;
+  transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+[data-fa-piece].fa-dragging {
+  transition: none;
+  z-index: 10;
+  pointer-events: none;
+}
+[data-fa-piece].fa-dragging .fa-card {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), 0 0 0 2px #c96442;
+  transform: scale(1.02);
+}
+
+/* isolation contains the content's own z-indexes so a sticky child can't paint
+   over the header or the dropdown popover. */
+.fa-card {
+  isolation: isolate;
+  position: relative;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  background: #fff;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.fa-card * {
+  scrollbar-width: none;
+}
+.fa-card *::-webkit-scrollbar {
+  display: none;
+}
+
+/* Trust-but-verify: a pending (agent-proposed) piece. */
+.fa-card.fa-pending {
+  opacity: 0.85;
+  box-shadow: 0 0 0 1.5px transparent, 0 1px 3px rgba(0, 0, 0, 0.08);
+  outline: 2px dashed #c96442;
+  outline-offset: 2px;
+}
+.fa-pending-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 3;
+  background: rgba(201, 100, 66, 0.92);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transform: scale(var(--fa-inv-zoom, 1));
+  transform-origin: top left;
+}
+
+/* ── Per-piece header (zoom-invariant) ─────────────────────────────────── */
+/* transform:scale (out-of-flow) with world-space width = card-width / inv-zoom
+   so after counter-scaling its on-screen width matches the card's — letting
+   the container query + ellipsis behave against the card's visible edge. */
+.fa-header {
+  position: absolute;
+  bottom: 100%;
+  left: -4px;
+  margin-bottom: calc(4px * var(--fa-inv-zoom, 1));
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  container-type: inline-size;
+  width: calc((100% + 4px) / var(--fa-inv-zoom, 1));
+  transform: scale(var(--fa-inv-zoom, 1));
+  transform-origin: bottom left;
+}
+
+.fa-labelrow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.fa-grip {
+  flex: 0 0 auto;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  padding: 5px 4px;
+  border-radius: 4px;
+  transition: background 0.12s, opacity 0.12s;
+}
+.fa-grip:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+.fa-grip:active {
+  cursor: grabbing;
+}
+
+.fa-labeltext {
+  flex: 1 1 auto;
+  min-width: 0;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  transition: background 0.12s;
+  overflow: hidden;
+}
+.fa-labeltext:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.fa-labeltext .fa-editable {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.fa-labeltext .fa-editable:focus {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Below ~4ch of label room: hide the label, drop the grip to hover-only. */
+@container (max-width: 110px) {
+  .fa-labeltext {
+    display: none;
+  }
+  .fa-grip {
+    opacity: 0;
+  }
+  [data-fa-piece]:hover .fa-grip {
+    opacity: 1;
+  }
+}
+
+.fa-btns {
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+[data-fa-piece]:hover .fa-btns {
+  opacity: 1;
+}
+
+/* ── Inline editor ─────────────────────────────────────────────────────── */
+.fa-editable {
+  cursor: text;
+  outline: none;
+  white-space: nowrap;
+  border-radius: 3px;
+  padding: 0 2px;
+  margin: 0 -2px;
+}
+.fa-editable:focus {
+  background: #fff;
+  box-shadow: 0 0 0 1.5px #c96442;
+}
+
+/* ── Dropdown menu containment ─────────────────────────────────────────── */
+/* Keep the kebab popover above later sibling cards (same z-index, later DOM). */
+.fa-menu {
+  z-index: 20;
+}
+
+/* ── Focus overlay ─────────────────────────────────────────────────────── */
+.fa-focus-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 20px 0;
+  gap: 16px;
+  z-index: 2;
+}
+
+.fa-focus-title {
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+  text-align: left;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.fa-focus-title-text {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+.fa-focus-subtitle {
+  flex-basis: 100%;
+  font-size: 13px;
+  opacity: 0.6;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.fa-focus-stage {
+  position: absolute;
+  top: 64px;
+  bottom: 56px;
+  left: 100px;
+  right: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.fa-focus-card-wrap {
+  position: relative;
+}
+.fa-focus-card {
+  transform-origin: top left;
+  background: #fff;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
+}
+.fa-focus-caption {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.85;
+  text-align: center;
+}
+.fa-focus-index {
+  opacity: 0.5;
+  margin-left: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.fa-focus-arrow {
+  position: absolute !important;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+.fa-focus-arrow-left {
+  left: 28px;
+}
+.fa-focus-arrow-right {
+  right: 28px;
+}
+
+.fa-focus-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+.fa-focus-dot {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(120, 110, 100, 0.3);
+}
+.fa-focus-dot-on {
+  background: rgba(60, 50, 40, 0.85);
+}
+
+/* ── Note ──────────────────────────────────────────────────────────────── */
+.fa-note {
+  position: absolute;
+}
