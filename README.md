@@ -1,5 +1,7 @@
 # @particle-academy/fancy-artboard
 
+[![Fancified](art/fancified.svg)](https://particle.academy)
+
 A Figma-style design canvas for **Human+ UX** — a pan/zoom `ArtBoard` of
 `ArtPiece`s (image, HTML, or live JSX), grouped into sections, with focus
 mode, drag-reorder, inline rename, and PNG/HTML export. Composed entirely from
