@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Modal, Action, Dropdown } from "@particle-academy/react-fancy";
+import { Modal, Button, Dropdown } from "@particle-academy/react-fancy";
 import type { ArtBoardValue, ArtPieceData, ArtSectionData } from "../../types";
 import { useArtBoard } from "../ArtBoard/context";
 
@@ -92,7 +92,7 @@ export function FocusOverlay() {
           onPick={(id) => board.setFocus(id)}
         />
         <div style={{ flex: 1 }} />
-        <Action variant="ghost" icon="x" onClick={close} aria-label="Close focus" />
+        <Button variant="ghost" icon="x" onClick={close} aria-label="Close focus" />
       </div>
 
       <div className="fa-focus-stage">
@@ -115,14 +115,14 @@ export function FocusOverlay() {
         </div>
       </div>
 
-      <Action
+      <Button
         variant="circle"
         icon="chevron-left"
         className="fa-focus-arrow fa-focus-arrow-left"
         onClick={() => step(-1)}
         aria-label="Previous"
       />
-      <Action
+      <Button
         variant="circle"
         icon="chevron-right"
         className="fa-focus-arrow fa-focus-arrow-right"

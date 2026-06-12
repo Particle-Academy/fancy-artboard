@@ -1,5 +1,5 @@
 import { useRef, useState, type CSSProperties } from "react";
-import { Action, Dropdown, Tooltip } from "@particle-academy/react-fancy";
+import { Button, Dropdown, Tooltip } from "@particle-academy/react-fancy";
 import type { ArtPieceData, ArtSectionData } from "../../types";
 import { useArtBoard } from "../ArtBoard/context";
 import { InlineEditor } from "../InlineEditor";
@@ -187,7 +187,7 @@ export function PieceFrame({ sectionId, piece, order }: PieceFrameProps) {
           <Dropdown placement="bottom-start">
             <Dropdown.Trigger>
               <Tooltip content="More">
-                <Action variant="ghost" size="sm" icon="more-horizontal" aria-label="More" />
+                <Button variant="ghost" size="sm" icon="more-horizontal" aria-label="More" />
               </Tooltip>
             </Dropdown.Trigger>
             <Dropdown.Items className="fa-menu">
@@ -224,7 +224,7 @@ export function PieceFrame({ sectionId, piece, order }: PieceFrameProps) {
             </Dropdown.Items>
           </Dropdown>
           <Tooltip content="Focus">
-            <Action variant="ghost" size="sm" icon="maximize" onClick={focus} aria-label="Focus" />
+            <Button variant="ghost" size="sm" icon="maximize" onClick={focus} aria-label="Focus" />
           </Tooltip>
         </div>
       </div>
