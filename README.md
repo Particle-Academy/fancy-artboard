@@ -101,3 +101,9 @@ This is the only entry that imports fancy-screens (an optional peer) — the bas
 ## License
 
 MIT
+
+---
+
+## ⭐ Star Fancy UI
+
+If this package is useful to you, a quick ⭐ on the repo really helps us build a better kit. Thank you!
