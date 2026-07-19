@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 import type { ArtBoardValue, ArtSectionData } from "../../types";
+import type { HtmlPolicy } from "../../html/policy";
 
 /** Internal board context shared by Section / PieceFrame / FocusOverlay. */
 export type ArtBoardCtx = {
@@ -12,6 +13,8 @@ export type ArtBoardCtx = {
   focus: string | null;
   setFocus: (pieceId: string | null) => void;
   onExport?: (pieceId: string, kind: "png" | "html") => void;
+  /** Host-owned trust policy for agent-authored HTML. */
+  htmlPolicy?: HtmlPolicy;
 };
 
 export const ArtBoardContext = createContext<ArtBoardCtx | null>(null);

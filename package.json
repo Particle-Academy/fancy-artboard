@@ -1,6 +1,6 @@
 {
   "name": "@particle-academy/fancy-artboard",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Figma-style design canvas for Human+ UX — a pan/zoom ArtBoard of ArtPieces (image, HTML, or JSX). Agent-driveable and renderable inside a fancy-screens Screen.",
   "repository": {
     "type": "git",
@@ -45,7 +45,9 @@
     "dev": "tsup --watch",
     "lint": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "prepublishOnly": "tsup"
+    "prepublishOnly": "npm run test && npm run lint && tsup",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "react",
@@ -72,10 +74,12 @@
     "@particle-academy/react-fancy": "^4.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "jsdom": "^29.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tsup": "^8.0.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^3.2.7"
   },
   "publishConfig": {
     "access": "public"

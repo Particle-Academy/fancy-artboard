@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Modal, Button, Dropdown } from "@particle-academy/react-fancy";
 import type { ArtBoardValue, ArtPieceData, ArtSectionData } from "../../types";
 import { useArtBoard } from "../ArtBoard/context";
+import { PolicyHtml } from "../../html/PolicyHtml";
+import type { HtmlPolicy } from "../../html/policy";
 
 const DEFAULT_W = 260;
 const DEFAULT_H = 480;
@@ -104,7 +106,12 @@ export function FocusOverlay() {
             className="fa-focus-card"
             style={{ width, height, transform: `scale(${scale})` }}
           >
-            <FocusContent piece={piece} nodes={board.nodes} />
+            <FocusContent
+              piece={piece}
+              nodes={board.nodes}
+              sectionId={sec.id}
+              htmlPolicy={board.htmlPolicy}
+            />
           </div>
         </div>
         <div className="fa-focus-caption">
@@ -148,9 +155,13 @@ export function FocusOverlay() {
 function FocusContent({
   piece,
   nodes,
+  sectionId,
+  htmlPolicy,
 }: {
   piece: ArtPieceData;
   nodes: Map<string, React.ReactNode>;
+  sectionId: string;
+  htmlPolicy?: HtmlPolicy;
 }) {
   const c = piece.content;
   if (c.kind === "image")
@@ -163,9 +174,15 @@ function FocusContent({
     );
   if (c.kind === "html")
     return (
-      <div
-        style={{ width: "100%", height: "100%" }}
-        dangerouslySetInnerHTML={{ __html: c.html }}
+      <PolicyHtml
+        html={c.html}
+        policy={htmlPolicy}
+        context={{
+          pieceId: piece.id,
+          sectionId,
+          origin: piece.origin ?? "agent",
+          reviewState: piece.pending ? "pending" : "accepted",
+        }}
       />
     );
   return <>{nodes.get(piece.id) ?? null}</>;

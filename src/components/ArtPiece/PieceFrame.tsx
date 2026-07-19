@@ -5,6 +5,7 @@ import { useArtBoard } from "../ArtBoard/context";
 import { InlineEditor } from "../InlineEditor";
 import { exportPiece, exportName, type ExportKind } from "../../lib/export";
 import { cx } from "../../lib/cx";
+import { PolicyHtml } from "../../html/PolicyHtml";
 
 const DEFAULT_W = 260;
 const DEFAULT_H = 480;
@@ -233,7 +234,7 @@ export function PieceFrame({ sectionId, piece, order }: PieceFrameProps) {
         className={cx("fa-card", piece.pending && "fa-pending")}
         style={cardStyle}
       >
-        <PieceContent piece={piece} />
+        <PieceContent piece={piece} sectionId={sectionId} />
         {piece.pending && <span className="fa-pending-badge">proposed</span>}
       </div>
     </div>
@@ -241,7 +242,7 @@ export function PieceFrame({ sectionId, piece, order }: PieceFrameProps) {
 }
 
 /** Renders the piece content inline so it scales crisply under the world transform. */
-function PieceContent({ piece }: { piece: ArtPieceData }) {
+function PieceContent({ piece, sectionId }: { piece: ArtPieceData; sectionId: string }) {
   const board = useArtBoard();
   const c = piece.content;
   if (c.kind === "image") {
@@ -255,9 +256,15 @@ function PieceContent({ piece }: { piece: ArtPieceData }) {
   }
   if (c.kind === "html") {
     return (
-      <div
-        style={{ width: "100%", height: "100%" }}
-        dangerouslySetInnerHTML={{ __html: c.html }}
+      <PolicyHtml
+        html={c.html}
+        policy={board.htmlPolicy}
+        context={{
+          pieceId: piece.id,
+          sectionId,
+          origin: piece.origin ?? "agent",
+          reviewState: piece.pending ? "pending" : "accepted",
+        }}
       />
     );
   }

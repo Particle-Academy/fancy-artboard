@@ -22,6 +22,7 @@ import { Section, SectionView, type SectionProps } from "./Section";
 import { ArtPiece, type ArtPieceProps } from "../ArtPiece/ArtPiece";
 import { Note } from "../Note/Note";
 import { FocusOverlay } from "../FocusOverlay/FocusOverlay";
+import type { HtmlPolicy } from "../../html/policy";
 
 const DEFAULT_VIEWPORT: Viewport = { x: 0, y: 0, zoom: 1 };
 
@@ -37,6 +38,12 @@ export type ArtBoardProps = {
   minZoom?: number;
   maxZoom?: number;
   onExport?: (pieceId: string, kind: "png" | "html") => void;
+  /**
+   * Trust policy for `kind:"html"` pieces. The HOST owns this — an agent's
+   * payload can never select or elevate its own render mode. Defaults to
+   * sandboxing pending content and sanitising accepted content.
+   */
+  htmlPolicy?: HtmlPolicy;
   /** `<ArtBoard.Section>` / `<ArtPiece>` authoring sugar. */
   children?: ReactNode;
   className?: string;
@@ -107,6 +114,7 @@ function ArtBoardRoot({
   minZoom = 0.1,
   maxZoom = 8,
   onExport,
+  htmlPolicy,
   children,
   className,
   style,
@@ -179,8 +187,9 @@ function ArtBoardRoot({
       focus: resolvedFocus,
       setFocus,
       onExport,
+      htmlPolicy,
     }),
-    [resolvedValue, compiled.nodes, setValue, setSections, resolvedFocus, setFocus, onExport],
+    [resolvedValue, compiled.nodes, setValue, setSections, resolvedFocus, setFocus, onExport, htmlPolicy],
   );
 
   return (

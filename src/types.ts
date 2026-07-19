@@ -1,3 +1,5 @@
+import type { HtmlOrigin } from "./html/policy";
+
 export type Viewport = { x: number; y: number; zoom: number };
 export type ArtPieceContent =
   | { kind: "image"; src: string; alt?: string }
@@ -6,6 +8,13 @@ export type ArtPieceContent =
 export type ArtPieceData = {
   id: string; label?: string; width?: number; height?: number;
   content: ArtPieceContent; pending?: boolean;
+  /**
+   * Who authored this piece. Drives the HTML trust policy together with
+   * `pending`. Absent is treated as `"agent"` — the conservative assumption on
+   * an open-world board, so unlabelled HTML is sanitised/sandboxed rather than
+   * trusted.
+   */
+  origin?: HtmlOrigin;
 };
 export type ArtSectionData = { id: string; title: string; subtitle?: string; pieces: ArtPieceData[] };
 export type ArtBoardValue = { sections: ArtSectionData[] };

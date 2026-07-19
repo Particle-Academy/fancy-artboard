@@ -9,3 +9,18 @@ export type {
   ArtSectionData,
   ArtBoardValue,
 } from "./types";
+
+export {
+  resolveHtmlMode,
+  sanitizeHtmlWithReport,
+  mostRestrictive,
+  DEFAULT_LIMITS,
+  type HtmlPolicy,
+  type HtmlPolicyContext,
+  type HtmlPolicyViolation,
+  type HtmlRenderMode,
+  type HtmlOrigin,
+  type HtmlReviewState,
+  type SanitizedHtmlResult,
+} from "./html/policy";
+export { PolicyHtml, type PolicyHtmlProps } from "./html/PolicyHtml";
