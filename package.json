@@ -1,7 +1,7 @@
 {
   "name": "@particle-academy/fancy-artboard",
   "version": "0.2.2",
-  "description": "Figma-style design canvas for Human+ UX — a pan/zoom ArtBoard of ArtPieces (image, HTML, or JSX). Agent-driveable and renderable inside a fancy-screens Screen.",
+  "description": "Figma-style design canvas for Human+ UX \u2014 a pan/zoom ArtBoard of ArtPieces (image, HTML, or JSX). Agent-driveable and renderable inside a fancy-screens Screen.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Particle-Academy/fancy-artboard.git"
@@ -43,7 +43,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "lint": "tsc --noEmit",
+    "lint": "tsc --noEmit && eslint .",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run test && npm run lint && tsup",
     "test": "vitest run",
@@ -74,11 +74,14 @@
     "@particle-academy/react-fancy": "^4.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "eslint": "^10.8.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "jsdom": "^29.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.7.0",
+    "typescript-eslint": "^8.65.0",
     "vitest": "^3.2.7"
   },
   "overrides": {
