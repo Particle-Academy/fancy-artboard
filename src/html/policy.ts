@@ -197,6 +197,22 @@ export function sanitizeHtmlWithReport(html: string): SanitizedHtmlResult {
     };
   }
 
+  // CodeQL flags this line as `js/html-constructed-from-input` (medium). It is a
+  // FALSE POSITIVE, dismissed on the alert — recorded here because a dismissal in
+  // GitHub's UI is invisible to anyone reading the code, and the next person to
+  // see the warning deserves the reasoning rather than a rediscovery.
+  //
+  // `parseFromString(..., "text/html")` builds an INERT document: no script
+  // executes, no resource is fetched, no side effect occurs. That is precisely
+  // why it is the standard way to sanitize untrusted HTML, and it is the parse
+  // step of the sanitizer — the walk below is what makes the output safe, and the
+  // only consumer (`PolicyHtml`) passes the SANITIZED result to
+  // `dangerouslySetInnerHTML`, never this input.
+  //
+  // CodeQL traces "library input -> HTML string -> parser" without modelling
+  // either of those facts. If this ever stops being a sanitizer — if the parsed
+  // document or the raw `html` reaches the DOM without the walk — the warning
+  // becomes real and this comment is wrong.
   const doc = new DOMParser().parseFromString(`<body>${html}</body>`, "text/html");
   const body = doc.body;
   if (!body) return { html: "", removed: [{ kind: "unparsable", detail: "HTML could not be parsed." }] };
