@@ -14,6 +14,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-08-13
+
+### Fixed
+
+- **Dark mode did not exist.** The stylesheet had zero occurrences of `dark`, no `prefers-color-scheme` block, and exactly one colour token (`--fa-bg`) against ten hardcoded light literals. On a dark-scheme app the board rendered as a cream slab with white frames. Reported by a consumer against 0.3.0 and reproduced on our own showcase.
+
+  The subtler half is why this was a correctness bug rather than polish: `.fa-viewport` declares `color`, making it the nearest ancestor with a declared colour above **all** piece content. Anything inside a piece that did not set its own text colour inherited warm dark ink — **including a react-fancy `<Card>` that had correctly resolved `dark:bg-zinc-900`**. react-fancy was behaving properly; this package overrode it lower in the tree, so the failure read as the *consumer's* bug.
+
+  **What you must do:** nothing, if you are on a light-scheme app — light mode is unchanged, value for value, and a test pins that. If your app is dark, the board now follows it. If you shipped your own dark override for this, you can delete it; an unlayered override loaded after this stylesheet still wins, so nothing breaks if you don't.
+
+### Added
+
+- **A theme token layer**, scoped to `.fa-viewport` so the package never reaches into a consumer's globals: `--fa-bg`, `--fa-surface`, `--fa-ink`, `--fa-ink-strong`, `--fa-ink-muted`, `--fa-hover`, `--fa-hover-soft`, `--fa-dot`, `--fa-dot-on`, plus `--fa-accent`, `--fa-accent-soft` and `--fa-on-accent`. Override any of them to retheme the board without fighting specificity.
+
+- **Dark support through two selectors**, because they cover different consumers: a `prefers-color-scheme: dark` media query for apps with no theme control, and `.dark` / `[data-theme="dark"]` for class-based apps. The media query is guarded (`:not(.light):not([data-theme="light"])`) so a user who explicitly picks light on a dark-scheme OS keeps a light board.
+
 ## [0.3.1] — 2026-08-13
 
 ### Fixed
