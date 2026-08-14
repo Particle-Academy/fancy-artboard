@@ -252,6 +252,39 @@
 }
 
 /* ── Focus overlay ─────────────────────────────────────────────────────── */
+
+/*
+ * The overlay's own container — the class `FocusOverlay` hands to
+ * `<Modal size="full">`.
+ *
+ * Everything below is `position: absolute`, so NOTHING is in flow and the panel
+ * has no intrinsic height. `size="full"` does not supply one either: it sets
+ * `max-w`/`max-h` — a CAP, not a size — on a panel whose own classes are
+ * `relative flex w-full flex-col ... border bg-white`. Without this rule the
+ * panel therefore computed to zero height and rendered as a bordered white
+ * HAIRLINE across a dimmed board. Every child was present and correct in the
+ * DOM; there was simply no box to lay them out in.
+ *
+ * `100vh` is deliberately taller than the Modal's own max-height cap: the cap
+ * clamps it. Restating the cap's value here would instead go stale the moment
+ * react-fancy changed it. `dvh` follows `vh` so mobile chrome is tracked while
+ * engines that drop the unknown unit keep the fallback.
+ *
+ * The panel chrome is cleared because a focus view is a lightbox: the card
+ * carries its own surface and shadow, and the arrows, dots and caption sit on
+ * the dimmed backdrop. These override Tailwind utilities by being UNLAYERED —
+ * an unlayered declaration beats any `@layer`, which is where Tailwind's
+ * utilities live — so this does not depend on stylesheet order.
+ */
+.fa-focus {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
 .fa-focus-bar {
   position: absolute;
   top: 0;

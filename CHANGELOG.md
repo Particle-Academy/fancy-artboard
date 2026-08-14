@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-08-13
+
+### Fixed
+
+- **The focus overlay rendered as a hairline instead of a lightbox.** Clicking *focus* on any board piece dimmed the board and produced a thin white line across the screen — no card, no arrows, no caption, no dots.
+
+  `FocusOverlay` lays every one of its children out with `position: absolute`, so nothing is in flow and the panel has no intrinsic height. It renders through react-fancy's `<Modal size="full">`, which does not supply one either: `full` sets `max-width`/`max-height` — a **cap, not a size**. The panel therefore computed to **2px** (its own top and bottom border) and the whole overlay had no box to lay out in.
+
+  The stylesheet defined `.fa-focus-bar`, `-stage`, `-card`, `-caption`, `-arrow` and `-dots` — every descendant — but never `.fa-focus`, the class the overlay hands to the panel precisely so it can size itself. Adding that rule (`height: 100dvh`, transparent chrome) fixes it; the Modal's own max-height still clamps the result, so the cap is not restated here and cannot go stale.
+
+  **What you must do:** nothing but upgrade — no API changed. If you worked around this with your own `.fa-focus` override, you can drop it; note that yours will still win if it is unlayered and loaded after this stylesheet.
+
 ## [0.3.0] — 2026-08-07
 
 ### Changed
