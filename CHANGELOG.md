@@ -14,6 +14,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-08-17
+
+### Added
+
+- **Notes are addressable data.** `ArtBoardValue` gains an optional `notes: ArtNoteData[]`, and `<Note>` gains an optional `id` rendered as `data-fa-note-id`.
+
+  Notes previously existed **only as React children**, and `NoteProps` carried no id at all. An agent driving the board could read every piece — pieces have ids — and was **blind to every note**: it could not enumerate them, resolve one, or author one without emitting JSX.
+
+  That broke both halves of the kit's component contract simultaneously — *"each interactive element has a stable identity"* and *"avoid forcing React children for things the agent must populate"* — in the one package whose entire subject is a shared human+agent canvas. Raised by a consumer blocked on agent-to-agent annotation, but it is a contract violation on its own terms, which is why the shape is designed from the contract rather than from their integration.
+
+  ```tsx
+  <ArtBoard value={{ sections, notes: [{ id: "review-42", text: "Anchor copy is wrong", left: 40, top: 60 }] }} />
+  ```
+
+  **What you must do:** nothing. Both fields are optional and the JSX-children form is unchanged — a note written as `<ArtBoard.Note>` still renders, with or without an `id`. Add ids when you want an agent to be able to address a note.
+
+  `ArtNoteData` mirrors `NoteProps` so a note round-trips between the two forms; `text` is named for data rather than `value`, which is a control's prop.
+
+
 ## [0.4.0] — 2026-08-13
 
 ### Fixed

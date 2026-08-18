@@ -7,6 +7,7 @@ export type {
   ArtPieceContent,
   ArtPieceData,
   ArtSectionData,
+  ArtNoteData,
   ArtBoardValue,
 } from "./types";
 

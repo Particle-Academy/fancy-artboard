@@ -205,7 +205,27 @@ function ArtBoardRoot({
         {resolvedValue.sections.map((section) => (
           <SectionView key={section.id} section={section} />
         ))}
-        {/* Free-floating notes authored as direct children (outside sections). */}
+        {/* Notes as DATA — what an agent can enumerate, resolve and author.
+            Rendered before the children form so a JSX note declared later wins
+            the paint order, matching how authors expect their own markup to
+            behave. */}
+        {resolvedValue.notes?.map((n) => (
+          <Note
+            key={n.id}
+            id={n.id}
+            value={n.text}
+            top={n.top}
+            left={n.left}
+            right={n.right}
+            bottom={n.bottom}
+            rotate={n.rotate}
+            width={n.width}
+            color={n.color}
+          />
+        ))}
+        {/* Free-floating notes authored as direct children (outside sections).
+            Kept: this is how every existing consumer writes a note, and notes
+            as data must ADD a way in rather than replace one. */}
         {flatten(children).filter((c) => isValidElement(c) && c.type === Note)}
       </ViewportEngine>
       {resolvedFocus != null && <FocusOverlay />}

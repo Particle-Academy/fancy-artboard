@@ -2,6 +2,15 @@ import { type ReactNode } from "react";
 import { StickyNote } from "@particle-academy/react-fancy";
 
 export type NoteProps = {
+  /**
+   * Stable handle. Rendered as `data-fa-note-id` so an agent can resolve this
+   * note instead of guessing at the DOM — the contract's "stable handles"
+   * clause, which this component previously failed.
+   *
+   * Optional so notes written before it existed keep working; they are simply
+   * not addressable.
+   */
+  id?: string;
   top?: number | string;
   left?: number | string;
   right?: number | string;
@@ -25,6 +34,7 @@ export type NoteProps = {
  * rotation (mirroring the reference DCPostIt).
  */
 export function Note({
+  id,
   top,
   left,
   right,
@@ -41,6 +51,8 @@ export function Note({
   return (
     <div
       className="fa-note"
+      data-fa-note=""
+      data-fa-note-id={id}
       style={{ position: "absolute", top, left, right, bottom, zIndex: 5 }}
     >
       <StickyNote
