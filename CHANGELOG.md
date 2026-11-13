@@ -23,6 +23,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **A piece's reorder grip is a real control** (axe `aria-prohibited-attr`, lab
+  run 601, K32). It was a `<span>` carrying `aria-label`, so the name was ignored
+  and only a pointer drag could reorder pieces. It is now a
+  `<button type="button">` named "Move {label}"; ArrowLeft / ArrowRight move the
+  piece one slot within its section (through the same controlled `onChange`).
+  The `.fa-grip` class and the drag behaviour are unchanged. Nothing to do on
+  upgrade.
+- The same run's other ArtBoard finding, a note's editable text with no name
+  (`aria-input-field-name`), is react-fancy `StickyNote`'s textbox and is fixed
+  there (K22); `ArtBoard.Note` picks it up from react-fancy.
+
 - **`CHANGELOG.md` is now in the published tarball.** `files` did not whitelist it, so npm never shipped it — and this package puts breaking changes in MINOR releases and tells you in the README to read the entry before taking one. The instruction existed for the author, who has the file, and not for the consumer, who is the only one being instructed. Nothing for you to do; the file simply arrives from this release on.
 
 ### Security

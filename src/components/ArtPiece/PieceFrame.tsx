@@ -67,6 +67,20 @@ export function PieceFrame({ sectionId, piece, order }: PieceFrameProps) {
 
   const focus = () => board.setFocus(id);
 
+  // Keyboard reorder: the arrow keys move this piece one slot.
+  const onGripKey = (e: React.KeyboardEvent) => {
+    const step = e.key === "ArrowLeft" ? -1 : e.key === "ArrowRight" ? 1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const from = order.indexOf(id);
+    const to = from + step;
+    if (from < 0 || to < 0 || to >= order.length) return;
+    const next = order.filter((k) => k !== id);
+    next.splice(to, 0, id);
+    reorder(next);
+  };
+
   // Live drag-reorder: dragged card sticks to the cursor; siblings slide into
   // their would-be slots via transforms; DOM order commits only on drop.
   const onGripDown = (e: React.PointerEvent) => {
@@ -160,11 +174,17 @@ export function PieceFrame({ sectionId, piece, order }: PieceFrameProps) {
         onPointerDown={(e) => e.stopPropagation()}
       >
         <div className="fa-labelrow">
-          <span
+          <button
+            type="button"
             className="fa-grip"
             onPointerDown={onGripDown}
+            onKeyDown={onGripKey}
             title="Drag to reorder"
-            aria-label="Drag to reorder"
+            // A button, not a labelled span: a name on a roleless span is
+            // ignored (axe aria-prohibited-attr), and a span gave keyboard users
+            // no way to reorder at all.
+            aria-label={`Move ${label}`}
+            aria-keyshortcuts="ArrowLeft ArrowRight"
           >
             <svg width="9" height="13" viewBox="0 0 9 13" fill="currentColor" aria-hidden>
               <circle cx="2" cy="2" r="1.1" />
@@ -174,7 +194,7 @@ export function PieceFrame({ sectionId, piece, order }: PieceFrameProps) {
               <circle cx="2" cy="11" r="1.1" />
               <circle cx="7" cy="11" r="1.1" />
             </svg>
-          </span>
+          </button>
           <span className="fa-labeltext" onClick={focus} title="Click to focus">
             <InlineEditor
               value={label}
